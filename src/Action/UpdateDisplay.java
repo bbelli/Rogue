@@ -59,7 +59,7 @@ public class UpdateDisplay extends CreatureAction {
             ObjectDisplayGrid.terminal.write("HP: 0", 0, 0, AsciiPanel.brightRed);
         }
         if(Dungeon.player.getHasArmor()){
-            //ObjectDisplayGrid.terminal.write(""+Dungeon.player.getArmor().getIntValue() + ' ', 8, 0, AsciiPanel.brightBlue);
+            ObjectDisplayGrid.terminal.write(""+Dungeon.player.getArmor().getIntValue() + ' ', 8, 0, AsciiPanel.brightBlue);
         }
         else{
             ObjectDisplayGrid.terminal.clear(' ',8,0, 3, 1);
@@ -108,44 +108,51 @@ public class UpdateDisplay extends CreatureAction {
     public void displayEquippedItems(){
         int scoreOffsetx = 15;
         int x= scoreOffsetx + 11;
+        if(Dungeon.player.getEquippedItems().size() <= 0){
+            clearEquipped();
+            return;
+        }
         ObjectDisplayGrid.terminal.clear(' ', x, 0, 10, 1);
         ObjectDisplayGrid.terminal.write( "Equipped: ", scoreOffsetx, 0);
         for (int i = 0; i < Dungeon.player.getEquippedItems().size(); i++) {
             ObjectDisplayGrid.terminal.write("" + Dungeon.player.getEquippedItems().get(i).getCharacter(), x, 0);
             x++;
+            ObjectDisplayGrid.terminal.write(" ", x, 0);
+            x++;
         }
+        //ObjectDisplayGrid.terminal.clear(' ', x-1, height -3, 1, 0); //Removes the last "-"
         ObjectDisplayGrid.terminal.repaint();
     }
     public void displayCommands(){
         writeToInfo("Commands: c, d, i, p, r, w, E, H, T Movement: h, j, k, l");
     }
-    public void infoCommand(char c){
+    public void infoCommand(char c) {
         clearInfo();
-        if(c == 'c'){
+        if (c == 'c') {
             writeToInfo("c: Change or take off armor");
-        } else if(c == 'd'){
+        } else if (c == 'd') {
             writeToInfo("d: Drop item from pack");
-        } else if(c == 'i'){
+        } else if (c == 'i') {
             writeToInfo("i: View pack/inventory");
-        } else if(c == 'p'){
+        } else if (c == 'p') {
             writeToInfo("p: Pick item from ground put in pack");
-        } else if(c == 'r'){
+        } else if (c == 'r') {
             writeToInfo("r: Read an item (must be scroll)");
-        } else if(c == 'w'){
+        } else if (c == 'w') {
             writeToInfo("w: Wear item (must be armor or sword)");
-        } else if(c == 'E'){
+        } else if (c == 'E') {
             writeToInfo("E: End Game");
-        } else if(c == 'H'){
+        } else if (c == 'H') {
             writeToInfo("H: Get detailed information on commands");
-        } else if(c == 'T'){
+        } else if (c == 'T') {
             writeToInfo("T: Take out weapon (must be sword)");
-        } else if(c == 'h'){
+        } else if (c == 'h') {
             writeToInfo("h: Move left");
-        } else if(c == 'j'){
+        } else if (c == 'j') {
             writeToInfo("j: Move down");
-        } else if(c == 'k'){
+        } else if (c == 'k') {
             writeToInfo("k: Move up");
-        } else if(c == 'l'){
+        } else if (c == 'l') {
             writeToInfo("l: Move right");
         }
     }

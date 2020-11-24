@@ -12,6 +12,7 @@ public class Player extends Creature {
     private static int room;
     private static int serial;
     public static int halDuration;
+    public static int fightDropInt;
 
     public void setName(String _name) {
         name = _name;
@@ -141,7 +142,7 @@ public class Player extends Creature {
                     Dungeon.player.hasSword(true);
                     //Dungeon.player.removeItem(ObjectDisplayGrid.sword); //Remove sword from item array add to equipped array
                     ObjectDisplayGrid.updateDisplay.displayEquippedItems();
-                    //ObjectDisplayGrid.updateDisplay.updateHpPlayer(Dungeon.player.getHp());
+                    ObjectDisplayGrid.updateDisplay.updateHpPlayer(Dungeon.player.getHp());
                 }
             }
             else{
@@ -165,7 +166,7 @@ public class Player extends Creature {
         }
 
     }
-
+    public int getFightDropInt() {return fightDropInt;}
     @Override
     public char getCharacter() {
         return '@';

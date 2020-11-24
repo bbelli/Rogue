@@ -9,7 +9,7 @@ public class KeyStrokePrinter implements InputObserver, Runnable {
     private static int DEBUG = 0;
     private static String CLASSID = "KeyStrokePrinter";
     private static Queue<Character> inputQueue = null;
-    private ObjectDisplayGrid displayGrid;
+    private final ObjectDisplayGrid displayGrid;
     public static boolean playerAlive = true;
 
     public KeyStrokePrinter(ObjectDisplayGrid grid) {
@@ -52,7 +52,12 @@ public class KeyStrokePrinter implements InputObserver, Runnable {
                 if (ch == 'X') {
                     System.out.println("got an X, ending input checking");
                     return false;
-                } else if (ch == 'h') { //move left
+                } else if (Objects.equals(inputQueue.peek(), 'H')) {
+                    ObjectDisplayGrid.updateDisplay.infoCommand(ch);
+                    System.out.println("A");
+                    inputQueue.remove(Character.toUpperCase('H'));
+                    return true;
+                }else if (ch == 'h') { //move left
                     displayGrid.move("left");
                 } else if (ch == 'l') { //move right
                     displayGrid.move("right");
@@ -67,7 +72,7 @@ public class KeyStrokePrinter implements InputObserver, Runnable {
                 } else if (ch == '`') { //Get stack elements, FOR DEBUG
                     System.out.println(displayGrid.printStack());
                 } else if (ch == 'i') { //show inventory
-                    displayGrid.updateDisplay.printInventory();
+                    ObjectDisplayGrid.updateDisplay.printInventory();
                 } else if (ch == 'w') {
                     inputQueue.add('w');
                 } else if (ch == 'c') { //change armor
@@ -76,12 +81,12 @@ public class KeyStrokePrinter implements InputObserver, Runnable {
                     System.out.println("R1");
                     inputQueue.add('r');
                 } else if (ch == '?') { //help command (shows all commands in pdf)
-                    displayGrid.updateDisplay.displayCommands();
+                    ObjectDisplayGrid.updateDisplay.displayCommands();
                 } else if(ch == 'T'){
                     System.out.println("T1");
                     inputQueue.add('T');
                 } else if (ch == 'H'){
-                    inputQueue.add(Character.toUpperCase('H'));
+                    inputQueue.add('H');
                 } else if(Objects.equals(inputQueue.peek(), 'd')){
                     inputQueue.remove('d');
                     displayGrid.dropItem(Character.getNumericValue(ch));
@@ -95,10 +100,6 @@ public class KeyStrokePrinter implements InputObserver, Runnable {
                     System.out.println("T2");
                     Dungeon.player.wearSword(Character.getNumericValue(ch));
                     inputQueue.remove('T');
-                } else if (Objects.equals(inputQueue.peek(), Character.toUpperCase('H'))) {
-                    displayGrid.updateDisplay.infoCommand(ch);
-                    inputQueue.remove(Character.toUpperCase('H'));
-                    return true;
                 } else if (Objects.equals(inputQueue.peek(), 'r')) {
                     Dungeon.player.read(Character.getNumericValue(ch));
                     inputQueue.remove('r');

@@ -21,6 +21,8 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
     public ArrayList<Item> printedItems = new ArrayList<>();
     private List<InputObserver> inputObservers = null;
     public static UpdateDisplay updateDisplay = null;
+    public static boolean fightDrop = false;
+//    public static int fightDropInt = 0;
     public static Item armor = new Armor("Ar");
     public static Item sword = new Sword("Sw");
     private static int height;
@@ -320,6 +322,12 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
                     if (teleport(cr, row, col)) return;
 
                     Dungeon.player.fight(cr);
+                    //DropItem if possible
+                    if (fightDrop) {
+                        Random random = new Random();
+                        int boundary = random.nextInt(Dungeon.player.getItems().size());
+                        dropItem(boundary);
+                    }
                     if(Dungeon.player.getHp() == 0) {
                         //TODO creature death action
                         //changedisplay first
@@ -342,7 +350,7 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
                         }
 
                         //Print YouWin message if exists
-                        Action yw = Dungeon.player.getAction("YouWing");
+                        Action yw = Dungeon.player.getAction("YouWin");
                         if (yw != null) {
                             ObjectDisplayGrid.updateDisplay.writeToInfo(yw.getMsg());
                         }
@@ -473,6 +481,9 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
             updateDisplay.writeToInfo("No item to pick up!");
         }
     }
+    public void fightDrop(int i){
+        dropItem(i);
+    }
 
     public void dropItem(int i){
         int currentX = 0;
@@ -489,16 +500,34 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
             } else {
                 objectGrid[currentX][currentY].pop();
                 Displayable itemToDrop = Dungeon.player.getItems().get(i-1);
+                if(itemToDrop.getCharacter() == ')'){
+                    Dungeon.player.getEquippedItems().remove(itemToDrop);
+                    updateDisplay.clearEquipped();
+                    updateDisplay.displayEquippedItems();
+                    Dungeon.player.hasSword(false);
+                }
                 addObjectToDisplay(itemToDrop, currentX, currentY);
                 terminal.repaint();
                 Dungeon.player.removeItem(i-1);
                 terminal.clear(' ', 7, height - 3, Dungeon.getWidth() - 8, 1);
             }
             addObjectToDisplay(Dungeon.player, currentX, currentY);
+            updateDisplay.clearEquipped();
+            updateDisplay.displayEquippedItems();
         } catch (Exception e) {
             System.out.println("Out of bounds");
         }
     }
+//    public void fightDrop(int i){
+//        int currentX = 0;
+//        int currentY = 0;
+//        int widthOff = dungeon.getPlayerRoomX();
+//        int heightOff = dungeon.getPlayerRoomY() + Dungeon.getTopHeight();
+//        currentX = Dungeon.player.getPosx() + widthOff;
+//        currentY = Dungeon.player.getPosy() + heightOff;
+//        objectGrid[currentX][currentY].pop();
+//        Displayable itemToDrop = Dungeon.player.getItems().get(i-1);
+//    }
 
     public void addObjectToDisplay(Displayable ch, int x, int y) {
         if ((0 <= x) && (x < objectGrid.length)) {
@@ -520,7 +549,7 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
         else if((ch == '?') || (ch == ')') || (ch == ']')){
             terminal.write(ch, x, y, AsciiPanel.brightCyan.darker());
         }
-        else if((ch == 'X')){
+        else if((ch == '#') || (ch == 'X')){
             terminal.write(ch, x, y, AsciiPanel.brightWhite.brighter());
         }
         else{
@@ -544,13 +573,13 @@ public class ObjectDisplayGrid extends JFrame implements KeyListener, InputSubje
         int currentY = 0;
         int widthOff = dungeon.getPlayerRoomX();
         int heightOff = dungeon.getPlayerRoomY() + Dungeon.getTopHeight();
-        String toString = "";
+        StringBuilder toString = new StringBuilder();
         currentX = Dungeon.player.getPosx() + widthOff;
         currentY = Dungeon.player.getPosy() + heightOff;
 
         for (int i = 0; i < getStackSize(); i++) {
-            toString += objectGrid[currentX][currentY].get(i).getCharacter() + ",";
+            toString.append(objectGrid[currentX][currentY].get(i).getCharacter()).append(",");
         }
-        return toString;
+        return toString.toString();
     }
 }

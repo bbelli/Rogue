@@ -145,9 +145,15 @@ public class Creature extends Displayable {
             Random r = new Random();
             int len = Dungeon.player.getItems().size();
             if (len > 0) {
-                Dungeon.player.removeItem(r.nextInt(len));
+                //int drop = r.nextInt(len);
+                //Dungeon.player.removeItem(drop);
+                //Dungeon.player.getItems().remove(drop);
+                ObjectDisplayGrid.fightDrop = true;
+                //Player.fightDropInt = drop;
+                //ObjectDisplayGrid
                 //print dropPack msg
                 ObjectDisplayGrid.updateDisplay.writeToInfo(dropItem.getMsg());
+
             }
         }
 
